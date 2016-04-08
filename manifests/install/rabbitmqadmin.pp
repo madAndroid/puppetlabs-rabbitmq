@@ -14,7 +14,11 @@ class rabbitmq::install::rabbitmqadmin {
   $default_pass = $rabbitmq::default_pass
   $node_ip_address = $rabbitmq::node_ip_address
 
-  if is_ipv6_address($node_ip_address) {
+
+  if $rabbitmq::node_ip_address == 'UNSET' {
+    # Pull from localhost if we don't have an explicit bind address
+    $sanitized_ip = '127.0.0.1'
+  } elsif is_ipv6_address($node_ip_address) {
     $curl_prefix  = '-g -6'
     $sanitized_ip = join(enclose_ipv6(any2array($node_ip_address)), ',')
   } else {
